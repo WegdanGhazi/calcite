@@ -809,6 +809,77 @@ public class ExpressionTest {
         "-3.14D",
         Expressions.toString(
             Expressions.constant(-3.14, double.class)));
+    assertEquals(
+        "true",
+        Expressions.toString(
+            Expressions.constant(true, boolean.class)));
+
+    // objects and nulls
+    assertEquals(
+        "new String[] {\n"
+            + "  \"foo\",\n"
+            + "  null}",
+        Expressions.toString(
+            Expressions.constant(new String[] {"foo", null})));
+
+    // string
+    assertEquals(
+        "\"hello, \\\"world\\\"!\"",
+        Expressions.toString(
+            Expressions.constant("hello, \"world\"!")));
+
+    // enum
+    assertEquals(
+        "org.apache.calcite.linq4j.test.ExpressionTest.MyEnum.X",
+        Expressions.toString(
+            Expressions.constant(MyEnum.X)));
+
+    // array of enum
+    assertEquals(
+        "new org.apache.calcite.linq4j.test.ExpressionTest.MyEnum[] {\n"
+            + "  org.apache.calcite.linq4j.test.ExpressionTest.MyEnum.X,\n"
+            + "  org.apache.calcite.linq4j.test.ExpressionTest.MyEnum.Y}",
+        Expressions.toString(
+            Expressions.constant(new MyEnum[]{MyEnum.X, MyEnum.Y})));
+
+    // class
+    assertEquals(
+        "java.lang.String.class",
+        Expressions.toString(
+            Expressions.constant(String.class)));
+
+    // array class
+    assertEquals(
+        "int[].class",
+        Expressions.toString(
+            Expressions.constant(int[].class)));
+
+    assertEquals(
+        "java.util.List[][].class",
+        Expressions.toString(
+            Expressions.constant(List[][].class)));
+
+    // automatically call constructor if it matches fields
+    assertEquals(
+        "new org.apache.calcite.linq4j.test.Linq4jTest.Employee[] {\n"
+            + "  new org.apache.calcite.linq4j.test.Linq4jTest.Employee(\n"
+            + "    100,\n"
+            + "    \"Fred\",\n"
+            + "    10),\n"
+            + "  new org.apache.calcite.linq4j.test.Linq4jTest.Employee(\n"
+            + "    110,\n"
+            + "    \"Bill\",\n"
+            + "    30),\n"
+            + "  new org.apache.calcite.linq4j.test.Linq4jTest.Employee(\n"
+            + "    120,\n"
+            + "    \"Eric\",\n"
+            + "    10),\n"
+            + "  new org.apache.calcite.linq4j.test.Linq4jTest.Employee(\n"
+            + "    130,\n"
+            + "    \"Janet\",\n"
+            + "    10)}",
+        Expressions.toString(
+            Expressions.constant(Linq4jTest.emps)));
 
     // automatically call constructor if it matches private fields
     assertEquals(
