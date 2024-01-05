@@ -197,10 +197,11 @@ public class ConstantExpression extends Expression {
     if (constructor != null) {
       writer.append("new ").append(value.getClass());
       list(writer,
-          Arrays.stream(value.getClass().getFields())
+          Arrays.stream(value.getClass().getDeclaredFields())
               // <@Nullable Object> is needed for CheckerFramework
               .<@Nullable Object>map(field -> {
                 try {
+                  field.setAccessible(true);
                   return field.get(value);
                 } catch (IllegalAccessException e) {
                   throw new RuntimeException(e);
@@ -281,7 +282,7 @@ public class ConstantExpression extends Expression {
   }
 
   private static @Nullable Constructor matchingConstructor(Object value) {
-    final Field[] fields = value.getClass().getFields();
+    final Field[] fields = value.getClass().getDeclaredFields();
     for (Constructor<?> constructor : value.getClass().getConstructors()) {
       if (argsMatchFields(fields, constructor.getParameterTypes())) {
         return constructor;
