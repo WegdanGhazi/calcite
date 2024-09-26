@@ -809,7 +809,6 @@ public class ExpressionTest {
         "-3.14D",
         Expressions.toString(
             Expressions.constant(-3.14, double.class)));
-
     assertEquals(
         "true",
         Expressions.toString(
@@ -881,6 +880,27 @@ public class ExpressionTest {
             + "    10)}",
         Expressions.toString(
             Expressions.constant(Linq4jTest.emps)));
+
+    // automatically call constructor if it matches private fields
+    assertEquals(
+        "com.google.common.collect.ImmutableSet.of(new org.apache.calcite.linq4j.test.ExpressionTest.TestObject(\n" +
+            "  \"test1\",\n" +
+            "  new org.apache.calcite.linq4j.test.ExpressionTest.InnerTestObject(\n" +
+            "    \"innerTest1\")),new org.apache.calcite.linq4j.test.ExpressionTest.TestObject(\n" +
+            "  \"test2\",\n" +
+            "  new org.apache.calcite.linq4j.test.ExpressionTest.InnerTestObject(\n" +
+            "    \"innerTest2\")),new org.apache.calcite.linq4j.test.ExpressionTest.TestObject(\n" +
+            "  \"test3\",\n" +
+            "  new org.apache.calcite.linq4j.test.ExpressionTest.InnerTestObject(\n" +
+            "    \"innerTest3\")),new org.apache.calcite.linq4j.test.ExpressionTest.TestObject(\n" +
+            "  \"test4\",\n" +
+            "  new org.apache.calcite.linq4j.test.ExpressionTest.InnerTestObject(\n" +
+            "    \"innerTest4\")))",
+        Expressions.toString(
+            Expressions.constant(ImmutableSet.of(new TestObject("test1", new InnerTestObject("innerTest1")),
+                new TestObject("test2", new InnerTestObject("innerTest2")),
+                new TestObject("test3", new InnerTestObject("innerTest3")),
+                new TestObject("test4", new InnerTestObject("innerTest4"))))));
   }
 
   @Test void testWriteArray() {
@@ -1727,6 +1747,36 @@ public class ExpressionTest {
       this.bi = bi;
       this.str = str;
       this.o = o;
+    }
+  }
+
+  public static class TestObject {
+    private String name;
+    private InnerTestObject innerTestObject;
+
+    public TestObject(String name, InnerTestObject innerTestObject) {
+      this.name = name;
+      this.innerTestObject = innerTestObject;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public InnerTestObject getInnerTestObject() {
+      return innerTestObject;
+    }
+  }
+
+  public static class InnerTestObject {
+    private String name;
+
+    public InnerTestObject(String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return name;
     }
   }
 }
